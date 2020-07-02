@@ -24,7 +24,7 @@ db = connectDb(),
         }
     },
     corsOptions = {
-        origin: 'http://localhost:3500',
+        origin: 'http://localhost:4200',
         optionsSuccessStatus: 200
     }
 

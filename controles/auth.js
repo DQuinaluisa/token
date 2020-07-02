@@ -24,8 +24,7 @@ const cache = require('memory-cache')
             let token = jwt.sign({data: decode.data}, process.env.KEY_JWT, {
                 algorithm: 'HS256',
                 expiresIn: parseInt(process.env.TIEMPO)
-                
-        
+
             })
            
             req.token = token
@@ -33,6 +32,7 @@ const cache = require('memory-cache')
         }
     })
 }*/
+
 
 let autentificar = (req, res, next) =>  {
     let token = req.headers.authorization || null; 
@@ -62,6 +62,6 @@ let autentificar = (req, res, next) =>  {
 
 
 module.exports = {
-   // autentica
-   autentificar
+   //  autentica
+  autentificar
 }

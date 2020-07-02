@@ -191,7 +191,12 @@ let crearUsuario = async (req, res) => {
 
     db.collection('usuarios').insertOne(usuario)
     .then(data => {
-        let rol = {
+        res.status(200).json({
+            transaction: true,
+            data,
+            msg: "datos guardados...",
+        });
+      /* let rol = {
             idUsuario: data.ops[0]._id,
             rol: req.body.rol
         }
@@ -202,7 +207,7 @@ let crearUsuario = async (req, res) => {
                 data,
                 msg: 'Ready'
             })
-        })
+        })*/
     })
     .catch(err => {
         res.status(400).json({
@@ -219,11 +224,8 @@ let login =  async  (req, res ) => {
       
     db.collection('usuarios').find({'email': usuario.email }).toArray()
     .then(data => {
-        let contra =   bcrypt.compareSync(usuario.passw, data[0].passw);  
         
-   // db.collection('roles').find({'id': data.id}).toArray()
-
-
+        let contra =   bcrypt.compareSync(usuario.passw, data[0].passw);  
 
         let token = jwt.sign({data: usuario.email}, process.env.KEY_JWT, {
             algorithm: 'HS256',
@@ -305,6 +307,48 @@ let loginUsuario = async (req, res) => {
     }
 }
 
+let loginA = async (req, res) => {
+    
+    const db = await connectDb()
+    let usuario = req.body.usuario
+      
+    db.collection('usuarios').find({'email': usuario.email}).toArray()
+    .then((data) => {
+      
+        if(usuario[0].email === email){
+            let tokenU = {
+                email: usuario[0],
+                rol: usuario[0].rol
+                
+            }
+            
+           let token = jwt.sign({ usuario: tokenU}, process.env.JWT_KEY, {
+                algorithm: 'HS256',
+                expiresIn: 60,
+            });
+            bcrypt.compareSync(passw, data[0].passw)
+            res.status(200).json({
+                ok: true,
+                data: data,
+                msg: "Listo",
+                token,
+               })
+             res.status(404).json({
+                ok: false,
+                data: null,
+                msg: "Password Incorrecto",
+            });  
+        }
+        console.log(tokenU)
+    })
+    .catch((err) => {
+        res.status(404).json({
+            ok: false,
+            data: null,
+            msg: "Email not found",
+        })
+    })
+}
 
 let postman = (req, res) => {
     /*
@@ -405,6 +449,7 @@ module.exports = {
     insertarMuchos,
     crearUsuario,
     login,
+    loginA,
     loginUsuario,
     postmanQuery,
     postmanParams,
